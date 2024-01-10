@@ -40,7 +40,7 @@
 export default {
     data() {
         return {
-            name: "This N'at",
+            name: "This N'at About Matt",
             questions: [
                 {
                     question: "Much like the author of this game, this cartoon dad is known for his love of pink frosted donuts with rainbow sprinkles.",
