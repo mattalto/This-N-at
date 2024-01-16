@@ -9,21 +9,25 @@
             </div>
 
             <div class="options">
-                <label v-for="(option, index) in getCurrentQuestion.options" v-bind:key="index"
-                    v-bind:class="`option 
-                    ${getCurrentQuestion.selected === index ? getCurrentQuestion.answer === index ? 'correct' : 'incorrect' : ''}
-                                                    } ${getCurrentQuestion.selected != null && index != currentQuestion.selected ? 'disabled' : ''}`">
-                    <input type="radio" v-bind:name="getCurrentQuestion.index" :value="index"
-                        v-model="getCurrentQuestion.selected" v-bind:disabled="getCurrentQuestion.selected"
-                        v-on:change="setAnswer">
+                <label v-for="(option, index) in getCurrentQuestion.options" :key="index" :class="`option 
+                ${getCurrentQuestion.selected === index ? getCurrentQuestion.answer === index ? 'correct' : 'incorrect' : ''}
+                                } 
+                                ${getCurrentQuestion.selected !== null && index !== getCurrentQuestion.selected ? 'disabled' : ''}`">
+
+                    <input type="radio" :name="getCurrentQuestion.index" :value="index"
+                        v-model="getCurrentQuestion.selected" :disabled="getCurrentQuestion.selected !== null"
+                        @click="setAnswer">
 
                     <span>{{ option }}</span>
                 </label>
             </div>
             <div class="footer">
-                <button v-on:click="nextQuestion" v-bind:disabled="!getCurrentQuestion.selected">
-                    {{ getCurrentQuestion.index === questions.length - 1 ? 'Finish' : getCurrentQuestion.selected !== null ?
-                        'Next Question' : 'Select an Option' }}
+                <button @click="nextQuestion" :disabled="!getCurrentQuestion.selected">
+                    {{
+                        getCurrentQuestion.index === questions.length - 1 ?
+                        'Finish' : getCurrentQuestion.selected !== null ?
+                            'Next Question' : 'Select an Option'
+                    }}
                 </button>
                 <div class="score">Score: {{ score }}/{{ questions.length }}</div>
             </div>
@@ -106,26 +110,25 @@ export default {
     computed: {
         score() {
             let value = 0;
-            this.questions.forEach((question) => {
-                if (question.selected === question.answer) {
+            this.questions.forEach((q) => {
+                if (q.selected === q.answer) {
                     value++;
                 }
             })
             return value;
         },
         getCurrentQuestion() {
-            return this.questions[this.currentQuestion];
-            //return this.question = this.currentQuestion;
-            //return this.question;
-        },
-        setAnswer(event) {
-            ((event) => {
-                this.questions[this.currentQuestion].selected = event.target.value;
-                event.target.value = null;
-            })
-        },
+            let question = this.questions[this.currentQuestion];
+            question.index = this.currentQuestion;
+            return question;
+            //return this.questions[this.currentQuestion];
+        }
     },
     methods: {
+        setAnswer(event) {
+            this.questions[this.currentQuestion].selected = event.target.value;
+            event.target.value = null;
+        },
         nextQuestion() {
             if (this.currentQuestion < this.questions.length - 1) {
                 this.currentQuestion++;
@@ -162,13 +165,11 @@ body {
 h1 {
     font-size: 3rem;
     margin-bottom: 2rem;
-    background-image: linear-gradient(
-        -225deg,
-        #231557 0%,
-        #44107a 29%,
-        #ff1361 67%,
-        #fff800 100%
-    );
+    background-image: linear-gradient(-225deg,
+            #231557 0%,
+            #44107a 29%,
+            #ff1361 67%,
+            #fff800 100%);
     background-size: auto auto;
     background-clip: border-box;
     background-size: 200% auto;
@@ -207,25 +208,29 @@ h1 {
     text-shadow: 0 0 5px gray;
 }
 
+.options {
+    margin-bottom: 0.5rem;
+}
+
 .option {
     display: block;
     padding: 1rem;
     background-color: rgb(211, 211, 211);
     margin-bottom: 0.5rem;
-    border-radius: 0.5rem;
+    border-radius: 5rem;
     text-shadow: 0 0 10px gray;
     cursor: pointer;
 }
 
 .option:hover {
+    background-color: rgba(139, 56, 207, 0.3);
+}
+
+.option.correct {
     background-color: rgb(101, 214, 86);
 }
 
-.option .correct {
-    background-color: aqua;
-}
-
-.option .incorrect {
+.option.incorrect {
     background-color: red;
 }
 
@@ -233,7 +238,7 @@ h1 {
     margin-bottom: 0;
 }
 
-.option .disabled {
+.option.disabled {
     opacity: 0.5;
 }
 
@@ -248,7 +253,7 @@ h1 {
     outline: none;
     border: none;
     cursor: pointer;
-    
+
     margin-top: 10px;
     padding: 0.5rem 1rem;
     background-color: #44107a;
@@ -256,7 +261,7 @@ h1 {
     font-weight: 700;
     text-transform: uppercase;
     font-size: 1.25rem;
-    border-radius: 0.5rem;
+    border-radius: 2.5rem;
 }
 
 .footer .score {
@@ -274,13 +279,11 @@ button:disabled {
 h2 {
     font-size: 2rem;
     margin-bottom: 2rem;
-    background-image: linear-gradient(
-        -225deg,
-        #231557 0%,
-        #44107a 29%,
-        #ff1361 67%,
-        #fff800 100%
-    );
+    background-image: linear-gradient(-225deg,
+            #231557 0%,
+            #44107a 29%,
+            #ff1361 67%,
+            #fff800 100%);
     background-size: auto auto;
     background-clip: border-box;
     background-size: 200% auto;
@@ -290,19 +293,17 @@ h2 {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     animation: textclip 2s linear infinite;
-    
+
 }
 
 p {
     font-size: 1.5rem;
     margin-bottom: 2rem;
-    background-image: linear-gradient(
-        -225deg,
-        #231557 0%,
-        #44107a 29%,
-        #ff1361 67%,
-        #fff800 100%
-    );
+    background-image: linear-gradient(-225deg,
+            #231557 0%,
+            #44107a 29%,
+            #ff1361 67%,
+            #fff800 100%);
     background-size: auto auto;
     background-clip: border-box;
     background-size: 200% auto;
